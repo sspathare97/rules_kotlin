@@ -1,8 +1,5 @@
 name: Release Binary Package
-on:
-  push:
-    tags:
-      - v*
+on: push
 
 jobs:
   generate:
@@ -27,19 +24,8 @@ jobs:
         run: bazelisk build //:rules_kotlin_release
       - name: Create release sha256
         run: shasum -a 256 bazel-bin/rules_kotlin_release.tgz > bazel-bin/rules_kotlin_release.tgz.sha256
-      - name: Upload bazel-bin/rules_kotlin_release.tgz
-        uses: svenstaro/upload-release-action@2.2.1
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: bazel-bin/rules_kotlin_release.tgz
-          asset_name: rules_kotlin_release.tgz
-          tag: ${{ github.ref }}
-          overwrite: true
-      - name: Upload bazel-bin/rules_kotlin_release.tgz.sha256
-        uses: svenstaro/upload-release-action@2.2.1
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: bazel-bin/rules_kotlin_release.tgz.sha256
-          asset_name: rules_kotlin_release.tgz.sha256
-          tag: ${{ github.ref }}
-          overwrite: true
+          name: rules_kotlin_release
+          path: bazel-out/k8-fastbuild/bin/rules_kotlin_release.tgz*
